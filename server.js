@@ -5,14 +5,33 @@ const port = 3000
 const exphbs = require('express-handlebars')
 const Handlebars = require('handlebars')
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
+const bodyParser = require('body-parser');
+const expressValidator = require('express-validator');
+
+// Use Body Parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Add after body parser initialization!
+app.use(expressValidator());
 
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', handlebars: allowInsecurePrototypeAccess(Handlebars) }))
 
 app.set('view engine', 'handlebars')
 
+// Set db
+require('./data/reddit-db');
+
+require('./controllers/posts.js')(app);
+
 app.get('/', (req, res) => {
   res.render('home')
 })
+
+app.get('/posts/new', (req, res) => {
+  res.render('posts-new')
+})
+
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

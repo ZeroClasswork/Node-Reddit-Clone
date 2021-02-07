@@ -25,8 +25,6 @@ require('./data/reddit-db');
 
 const Post = require('./models/post');
 
-require('./controllers/posts.js')(app);
-
 app.get('/', (req, res) => {
   Post.find({}).lean()
     .then(posts => {
@@ -41,6 +39,7 @@ app.get('/posts/new', (req, res) => {
   res.render('posts-new')
 })
 
+require('./controllers/posts.js')(app);
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

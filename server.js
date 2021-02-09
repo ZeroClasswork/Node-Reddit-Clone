@@ -1,6 +1,11 @@
 const express = require('express')
+var cookieParser = require("cookie-parser")
+const jwt = require("jsonwebtoken")
+
 const app = express()
 const port = 3000
+
+require('dotenv').config()
 
 const exphbs = require('express-handlebars')
 const Handlebars = require('handlebars')
@@ -15,6 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // Add after body parser initialization!
 app.use(expressValidator());
 
+app.use(cookieParser())
 
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', handlebars: allowInsecurePrototypeAccess(Handlebars) }))
 
@@ -41,6 +47,7 @@ app.get('/posts/new', (req, res) => {
 
 require('./controllers/posts')(app)
 require('./controllers/comments')(app)
+require('./controllers/auth')(app)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

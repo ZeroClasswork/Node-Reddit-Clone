@@ -22,6 +22,20 @@ app.use(expressValidator());
 
 app.use(cookieParser())
 
+var checkAuth = (req, res, next) => {
+  console.log("Checking authentication")
+  if (typeof req.cookies.nToken === undefined || req.cookies.nToken === null) {
+    req.user = null
+  } else {
+    var token = req.cookies.nToken
+    var decodedToken = jwt.decode(token, { complete: true }) || {}
+    req.user = decodedToken.payload
+  }
+
+  next()
+}
+app.use(checkAuth)
+
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', handlebars: allowInsecurePrototypeAccess(Handlebars) }))
 
 app.set('view engine', 'handlebars')
@@ -30,20 +44,6 @@ app.set('view engine', 'handlebars')
 require('./data/reddit-db');
 
 const Post = require('./models/post');
-
-app.get('/', (req, res) => {
-  Post.find({}).lean()
-    .then(posts => {
-      res.render('posts-index', { posts });
-    })
-    .catch(err => {
-      console.log(err.message);
-    })
-})
-
-app.get('/posts/new', (req, res) => {
-  res.render('posts-new')
-})
 
 require('./controllers/posts')(app)
 require('./controllers/comments')(app)

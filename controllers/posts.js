@@ -21,9 +21,12 @@ module.exports = (app) => {
   app.post('/posts/new', (req, res) => {
     // INSTANTIATE INSTANCE OF POST MODEL
     if (req.user) {
-      var post = new Post(req.body);
+      var post = new Post(req.body)
 
       post.author = req.user._id
+      post.upVotes = []
+      post.downVotes = []
+      post.voteScore = 0
 
       // SAVE INSTANCE OF POST MODEL TO DB
       post
@@ -66,5 +69,41 @@ module.exports = (app) => {
       .catch((err) => {
         console.log(err)
       })
+  })
+
+  app.put("/posts/:id/vote-up", function(req, res) {
+    if (req.user) {
+      Post.findById(req.params.id)
+        .then((post) => {
+          post.upVotes.push(req.user._id)
+          post.voteScore = post.voteScore + 1
+          post.save()
+
+          res.status(200)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else {
+      return res.status(401)
+    }
+  })
+
+  app.put("/posts/:id/vote-down", function(req, res) {
+    if (req.user) {
+      Post.findById(req.params.id)
+        .then((post) => {
+          post.downVotes.push(req.user._id)
+          post.voteScore = post.voteScore - 1
+          post.save()
+
+          res.status(200)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    } else {
+      return res.status(401)
+    }
   })
 };

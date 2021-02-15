@@ -35,6 +35,8 @@ var checkAuth = (req, res, next) => {
 }
 app.use(checkAuth)
 
+app.use(express.static(__dirname + "/public"))
+
 app.engine('handlebars', exphbs({ defaultLayout: 'layout', handlebars: allowInsecurePrototypeAccess(Handlebars) }))
 
 app.set('view engine', 'handlebars')
@@ -47,6 +49,7 @@ const Post = require('./models/post');
 require('./controllers/posts')(app)
 require('./controllers/comments')(app)
 require('./controllers/auth')(app)
+require('./controllers/replies')(app)
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)

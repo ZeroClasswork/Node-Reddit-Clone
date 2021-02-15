@@ -14,6 +14,5 @@
 </form>
 
 {{#each post.comments}}
-  <p>{{this.content}}</p>
-  <p class="text-right">{{this.author.username}}</p>
+  {{> comment comment=this postId=../post._id}}
 {{/each}}

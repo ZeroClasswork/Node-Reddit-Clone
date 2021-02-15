@@ -14,11 +14,15 @@ module.exports = function(app) {
       comment
         .save()
         .then(comment => {
-          return Post.findById(req.params.postId)
+          return Promise.all([
+            Post.findById(req.params.postId)
+          ])
         })
         .then(post => {
           post.comments.unshift(comment)
-          return post.save()
+          return Promise.all([
+            post.save()
+          ])
         })
         .then(post => {
           res.redirect("/posts/" + req.params.postId)
